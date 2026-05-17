@@ -1,0 +1,13 @@
+groups:
+  - name: ml_service_alerts
+    rules:
+      - alert: HighLatency
+        expr: histogram_quantile(0.95, sum(rate(request_latency_seconds_bucket[5m])) by (le)) > 1
+        for: 2m
+        labels:
+          severity: warning
+          service: ml_recommendation
+        annotations:
+          summary: "High request latency detected"
+          description: "p95 latency exceeded 1s for more than 2 minutes. Current value: {{ $value }}s"
+          runbook_url: "https://wiki.example.com/runbooks/high-latency"
